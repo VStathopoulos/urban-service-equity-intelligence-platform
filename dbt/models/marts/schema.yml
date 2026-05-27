@@ -105,3 +105,46 @@ models:
                   - 'Breached 72h proxy'
                   - 'Within 72h proxy'
                   - 'Not closed / unknown'
+
+  - name: mart_city_comparison
+    description: "City-level KPI mart comparing request volume, backlog, geocoding, mapping coverage, and resolution-time proxy metrics."
+    columns:
+      - name: source_city
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['NYC', 'Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+
+      - name: source_system
+        tests:
+          - not_null
+
+      - name: total_requests
+        tests:
+          - not_null
+
+      - name: closed_requests
+        tests:
+          - not_null
+
+      - name: open_requests
+        tests:
+          - not_null
+
+      - name: open_backlog_rate_pct
+        tests:
+          - not_null
+
+      - name: geocoded_rate_pct
+        tests:
+          - not_null
+
+      - name: category_mapping_rate_pct
+        tests:
+          - not_null
