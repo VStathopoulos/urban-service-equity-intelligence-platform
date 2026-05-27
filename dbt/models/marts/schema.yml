@@ -148,3 +148,48 @@ models:
       - name: category_mapping_rate_pct
         tests:
           - not_null
+
+  - name: mart_category_performance
+    description: "Category-level KPI mart comparing standardized service categories across cities."
+    columns:
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NYC', 'Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+
+      - name: source_system
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nyc_311', 'barcelona_iris']
+
+      - name: service_category_standardized
+        tests:
+          - not_null
+
+      - name: total_requests
+        tests:
+          - not_null
+
+      - name: closed_requests
+        tests:
+          - not_null
+
+      - name: open_requests
+        tests:
+          - not_null
+
+      - name: pct_of_city_requests
+        tests:
+          - not_null
+
+      - name: geocoded_rate_pct
+        tests:
+          - not_null
