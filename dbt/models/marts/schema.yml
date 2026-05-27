@@ -13,3 +13,95 @@ models:
       - name: checked_at
         tests:
           - not_null
+
+  - name: fact_service_requests
+    description: "BI-facing fact table for cross-city service request analysis across NYC 311 and Barcelona IRIS."
+    columns:
+      - name: service_request_key
+        description: "Unique cross-city request key composed from source system and request ID."
+        tests:
+          - not_null
+          - unique
+
+      - name: source_system
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nyc_311', 'barcelona_iris']
+
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NYC', 'Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['USA', 'Spain']
+
+      - name: request_id
+        tests:
+          - not_null
+
+      - name: created_at
+        tests:
+          - not_null
+
+      - name: created_date
+        tests:
+          - not_null
+
+      - name: created_month
+        tests:
+          - not_null
+
+      - name: service_category_original
+        tests:
+          - not_null
+
+      - name: service_category_standardized
+        tests:
+          - not_null
+
+      - name: is_category_mapped
+        tests:
+          - not_null
+
+      - name: has_area
+        tests:
+          - not_null
+
+      - name: area_name
+        tests:
+          - not_null
+
+      - name: has_geo
+        tests:
+          - not_null
+
+      - name: resolution_time_bucket
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'No closed timestamp'
+                  - '< 24 hours'
+                  - '24–72 hours'
+                  - '3–7 days'
+                  - '7+ days'
+
+      - name: sla_72h_proxy_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'Breached 72h proxy'
+                  - 'Within 72h proxy'
+                  - 'Not closed / unknown'
