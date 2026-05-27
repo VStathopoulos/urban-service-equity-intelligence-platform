@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: int_service_requests_canonical
+    description: "Canonical cross-city service request model combining NYC 311 and Barcelona IRIS into one shared analytical structure."
+    columns:
+      - name: service_request_key
+        description: "Unique cross-city request key composed from source system and request ID."
+        tests:
+          - not_null
+          - unique
+
+      - name: source_system
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nyc_311', 'barcelona_iris']
+
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NYC', 'Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['USA', 'Spain']
+
+      - name: request_id
+        tests:
+          - not_null
+
+      - name: created_at
+        tests:
+          - not_null
+
+      - name: created_date
+        tests:
+          - not_null
+
+      - name: created_month
+        tests:
+          - not_null
+
+      - name: status
+        tests:
+          - not_null
+
+      - name: is_closed
+        tests:
+          - not_null
+
+      - name: is_open
+        tests:
+          - not_null
+
+      - name: service_category_original
+        tests:
+          - not_null
+
+      - name: has_area
+        description: "Boolean flag indicating whether the source record had a reported area/neighbourhood/borough before canonical fallback."
+        tests:
+          - not_null
+
+      - name: area_name
+        description: "Canonical area name. Missing source areas are labeled as 'Unknown / Not reported'."
+        tests:
+          - not_null
+
+      - name: has_geo
+        tests:
+          - not_null

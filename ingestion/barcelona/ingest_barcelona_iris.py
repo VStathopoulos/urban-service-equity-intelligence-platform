@@ -4,7 +4,12 @@ from datetime import datetime, timezone
 
 import pandas as pd
 from dotenv import load_dotenv
+from pyproj import Transformer
 from sqlalchemy import create_engine, text
+
+
+SOURCE_CRS = "EPSG:25831"  # ETRS89 / UTM zone 31N
+TARGET_CRS = "EPSG:4326"   # WGS84 longitude / latitude
 
 
 def get_env_value(name: str, default: str | None = None) -> str:
@@ -50,6 +55,51 @@ def make_unique_columns(columns: list[str]) -> list[str]:
     return output
 
 
+def clean_numeric_series(series: pd.Series) -> pd.Series:
+    return pd.to_numeric(
+        series.astype(str)
+        .str.replace('"', "", regex=False)
+        .str.replace(",", ".", regex=False)
+        .str.strip()
+        .replace({"": None, "nan": None, "None": None}),
+        errors="coerce",
+    )
+
+
+def add_wgs84_coordinates(df: pd.DataFrame) -> pd.DataFrame:
+    if "coordenada_x" not in df.columns or "coordenada_y" not in df.columns:
+        df["coordinate_x_etrs89"] = pd.NA
+        df["coordinate_y_etrs89"] = pd.NA
+        df["longitude_derived"] = pd.NA
+        df["latitude_derived"] = pd.NA
+        df["coordinate_source_crs"] = SOURCE_CRS
+        df["coordinate_target_crs"] = TARGET_CRS
+        return df
+
+    df["coordinate_x_etrs89"] = clean_numeric_series(df["coordenada_x"])
+    df["coordinate_y_etrs89"] = clean_numeric_series(df["coordenada_y"])
+
+    transformer = Transformer.from_crs(SOURCE_CRS, TARGET_CRS, always_xy=True)
+
+    valid_mask = df["coordinate_x_etrs89"].notna() & df["coordinate_y_etrs89"].notna()
+
+    df["longitude_derived"] = pd.NA
+    df["latitude_derived"] = pd.NA
+
+    if valid_mask.any():
+        lon, lat = transformer.transform(
+            df.loc[valid_mask, "coordinate_x_etrs89"].to_numpy(),
+            df.loc[valid_mask, "coordinate_y_etrs89"].to_numpy(),
+        )
+        df.loc[valid_mask, "longitude_derived"] = lon
+        df.loc[valid_mask, "latitude_derived"] = lat
+
+    df["coordinate_source_crs"] = SOURCE_CRS
+    df["coordinate_target_crs"] = TARGET_CRS
+
+    return df
+
+
 def fetch_barcelona_iris_sample() -> pd.DataFrame:
     source_url = get_env_value("BARCELONA_IRIS_SOURCE_URL")
     limit = int(get_env_value("BARCELONA_IRIS_SAMPLE_LIMIT", "5000"))
@@ -72,6 +122,8 @@ def fetch_barcelona_iris_sample() -> pd.DataFrame:
     original_columns = list(df.columns)
     df.columns = make_unique_columns(original_columns)
 
+    df = add_wgs84_coordinates(df)
+
     df["ingested_at_utc"] = datetime.now(timezone.utc)
     df["source_system"] = "barcelona_iris"
     df["source_url"] = source_url
@@ -84,6 +136,10 @@ def fetch_barcelona_iris_sample() -> pd.DataFrame:
     for col in df.columns:
         print(f"- {col}")
 
+    print("Coordinate conversion summary:")
+    print(f"- rows with source coordinates: {df['coordinate_x_etrs89'].notna().sum():,}")
+    print(f"- rows with derived longitude/latitude: {df['longitude_derived'].notna().sum():,}")
+
     return df
 
 
@@ -92,6 +148,9 @@ def load_to_postgres(df: pd.DataFrame) -> None:
 
     with engine.begin() as conn:
         conn.execute(text("create schema if not exists raw_barcelona;"))
+        conn.execute(text("drop view if exists intermediate.int_service_requests_canonical cascade;"))
+        conn.execute(text("drop view if exists staging.stg_barcelona_iris_requests cascade;"))
+        conn.execute(text("drop table if exists raw_barcelona.barcelona_iris_requests cascade;"))
 
     df.to_sql(
         name="barcelona_iris_requests",

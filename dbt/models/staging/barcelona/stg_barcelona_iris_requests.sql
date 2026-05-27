@@ -29,8 +29,12 @@ cleaned as (
         nullif(btrim(replace(mes_data_tancament::text, '"', '')), '') as closed_month,
         nullif(btrim(replace(any_data_tancament::text, '"', '')), '') as closed_year,
 
-        nullif(replace(btrim(replace(latitud::text, '"', '')), ',', '.'), '') as latitude_text,
-        nullif(replace(btrim(replace(longitud::text, '"', '')), ',', '.'), '') as longitude_text,
+        coordinate_x_etrs89::double precision as coordinate_x_etrs89,
+        coordinate_y_etrs89::double precision as coordinate_y_etrs89,
+        latitude_derived::double precision as latitude_derived,
+        longitude_derived::double precision as longitude_derived,
+        coordinate_source_crs::text as coordinate_source_crs,
+        coordinate_target_crs::text as coordinate_target_crs,
 
         ingested_at_utc::timestamptz as ingested_at_utc,
         source_system::text as source_system,
@@ -89,17 +93,13 @@ typed as (
         support_channel,
         response_channel,
 
-        case
-            when latitude_text ~ '^-?[0-9]+(\.[0-9]+)?$'
-                then latitude_text::double precision
-            else null
-        end as latitude,
+        latitude_derived as latitude,
+        longitude_derived as longitude,
 
-        case
-            when longitude_text ~ '^-?[0-9]+(\.[0-9]+)?$'
-                then longitude_text::double precision
-            else null
-        end as longitude,
+        coordinate_x_etrs89,
+        coordinate_y_etrs89,
+        coordinate_source_crs,
+        coordinate_target_crs,
 
         ingested_at_utc,
         source_system,
@@ -138,6 +138,11 @@ final as (
 
         latitude,
         longitude,
+
+        coordinate_x_etrs89,
+        coordinate_y_etrs89,
+        coordinate_source_crs,
+        coordinate_target_crs,
 
         case
             when closed_at is not null and created_at is not null
@@ -204,6 +209,11 @@ select
 
     latitude,
     longitude,
+
+    coordinate_x_etrs89,
+    coordinate_y_etrs89,
+    coordinate_source_crs,
+    coordinate_target_crs,
 
     resolution_hours,
     is_closed,
