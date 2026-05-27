@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: raw_barcelona
+    description: "Raw Barcelona IRIS citizen request data loaded from Barcelona Open Data."
+    schema: raw_barcelona
+    tables:
+      - name: barcelona_iris_requests
+        description: "Raw Barcelona IRIS service requests sample."
+        columns:
+          - name: fitxa_id
+            tests:
+              - not_null
+              - unique
+          - name: tipus
+            tests:
+              - not_null
+          - name: area
+            tests:
+              - not_null

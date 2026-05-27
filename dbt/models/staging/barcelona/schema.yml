@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: stg_barcelona_iris_requests
+    description: "Cleaned and standardized staging model for Barcelona IRIS citizen service requests."
+    columns:
+      - name: request_id
+        tests:
+          - not_null
+          - unique
+
+      - name: created_at
+        tests:
+          - not_null
+
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Closed', 'Open or unknown']
+
+      - name: request_type_original
+        tests:
+          - not_null
+
+      - name: service_category_original
+        tests:
+          - not_null
+
+      - name: raw_duplicate_count
+        description: "Number of raw rows found for the same Barcelona request_id before staging deduplication."
+        tests:
+          - not_null
+
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Spain']
