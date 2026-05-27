@@ -1,0 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS raw_nyc;
+CREATE SCHEMA IF NOT EXISTS raw_barcelona;
+CREATE SCHEMA IF NOT EXISTS analytics;
+
+GRANT ALL PRIVILEGES ON SCHEMA raw_nyc TO urban_admin;
+GRANT ALL PRIVILEGES ON SCHEMA raw_barcelona TO urban_admin;
+GRANT ALL PRIVILEGES ON SCHEMA analytics TO urban_admin;
