@@ -1,0 +1,31 @@
+name: urban_service_equity
+version: '1.0.0'
+config-version: 2
+
+profile: urban_service_equity
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  urban_service_equity:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: analytics
+
+seeds:
+  urban_service_equity:
+    +schema: seeds

@@ -40,3 +40,6 @@ superset/.superset/
 # OS / editor
 .DS_Store
 .vscode/
+
+# dbt local user config
+dbt/.user.yml
