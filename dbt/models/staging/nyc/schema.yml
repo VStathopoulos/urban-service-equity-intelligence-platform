@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: stg_nyc_311_requests
+    description: "Cleaned and standardized staging model for NYC 311 service requests."
+    columns:
+      - name: request_id
+        tests:
+          - not_null
+          - unique
+
+      - name: created_at
+        tests:
+          - not_null
+
+      - name: status
+        tests:
+          - not_null
+
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NYC']
+
+      - name: source_country
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['USA']

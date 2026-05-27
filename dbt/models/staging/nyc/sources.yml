@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: raw_nyc
+    description: "Raw NYC 311 service request data loaded from NYC Open Data."
+    schema: raw_nyc
+    tables:
+      - name: nyc_311_requests
+        description: "Raw NYC 311 service requests sample."
+        columns:
+          - name: unique_key
+            tests:
+              - not_null
+              - unique
+          - name: created_date
+            tests:
+              - not_null
+          - name: status
+            tests:
+              - not_null
