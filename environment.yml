@@ -1,0 +1,24 @@
+name: urban-service-equity
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11
+  - pip
+  - pandas
+  - numpy
+  - requests
+  - python-dotenv
+  - sqlalchemy
+  - psycopg2
+  - pyyaml
+  - jupyterlab
+  - ipykernel
+
+  - pip:
+      - dbt-core==1.11.8
+      - dbt-postgres==1.10.0
+      - dbt-adapters==1.22.10
+      - dbt-common==1.37.3
+      - dbt-semantic-interfaces==0.9.0

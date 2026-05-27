@@ -1,0 +1,42 @@
+# Environment files
+.env
+.env.*
+
+# Keep example env file
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Conda / virtual environments
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Local data outputs
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml
+
+# Superset local state
+superset/superset_home/
+superset/.superset/
+
+# OS / editor
+.DS_Store
+.vscode/
