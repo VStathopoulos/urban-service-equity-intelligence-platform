@@ -193,3 +193,52 @@ models:
       - name: geocoded_rate_pct
         tests:
           - not_null
+
+  - name: mart_area_equity
+    description: "Area-level equity mart comparing request volume, backlog, geocoding coverage, and resolution-time proxy metrics by city area."
+    columns:
+      - name: source_city
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NYC', 'Barcelona']
+
+      - name: source_country
+        tests:
+          - not_null
+
+      - name: source_system
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nyc_311', 'barcelona_iris']
+
+      - name: area_name
+        tests:
+          - not_null
+
+      - name: has_area
+        tests:
+          - not_null
+
+      - name: total_requests
+        tests:
+          - not_null
+
+      - name: closed_requests
+        tests:
+          - not_null
+
+      - name: open_requests
+        tests:
+          - not_null
+
+      - name: open_backlog_rate_pct
+        tests:
+          - not_null
+
+      - name: geocoded_rate_pct
+        tests:
+          - not_null
