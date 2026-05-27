@@ -1,0 +1,136 @@
+mapping_key,source_system,service_category_original,service_category_standardized
+barcelona_iris|Recollida i neteja de l'espai urbà,barcelona_iris,Recollida i neteja de l'espai urbà,Sanitation / Cleaning / Waste
+barcelona_iris|Manteniment de l'espai urbà,barcelona_iris,Manteniment de l'espai urbà,Public Space Maintenance
+barcelona_iris|Portal de tràmits,barcelona_iris,Portal de tràmits,Administrative / Information / Digital Services
+barcelona_iris|Mobilitat,barcelona_iris,Mobilitat,Mobility / Parking / Traffic
+barcelona_iris|Gestions municipals,barcelona_iris,Gestions municipals,Administrative / Information / Digital Services
+barcelona_iris|Prevenció i seguretat,barcelona_iris,Prevenció i seguretat,Public Safety / Police
+barcelona_iris|Serveis socials,barcelona_iris,Serveis socials,Social Services / Homelessness
+barcelona_iris|Informació  tràmits i atenció ciutadana,barcelona_iris,Informació  tràmits i atenció ciutadana,Administrative / Information / Digital Services
+barcelona_iris|Urbanisme,barcelona_iris,Urbanisme,Housing / Buildings / Urban Planning
+barcelona_iris|Sanitat i salut pública,barcelona_iris,Sanitat i salut pública,Public Health / Pests
+barcelona_iris|Oci / lleure,barcelona_iris,Oci / lleure,Culture / Leisure / Sports
+barcelona_iris|Cultura,barcelona_iris,Cultura,Culture / Leisure / Sports
+barcelona_iris|Transports públics,barcelona_iris,Transports públics,Mobility / Parking / Traffic
+barcelona_iris|Nadal,barcelona_iris,Nadal,Culture / Leisure / Sports
+barcelona_iris|Hisenda,barcelona_iris,Hisenda,Tax / Finance
+barcelona_iris|Esports,barcelona_iris,Esports,Culture / Leisure / Sports
+barcelona_iris|Consultes web,barcelona_iris,Consultes web,Administrative / Information / Digital Services
+barcelona_iris|Medi ambient,barcelona_iris,Medi ambient,Parks / Trees / Environment
+barcelona_iris|Agraïments,barcelona_iris,Agraïments,Administrative / Information / Digital Services
+barcelona_iris|Promoció econòmica  comerç i mercats,barcelona_iris,Promoció econòmica  comerç i mercats,Economic Development / Commerce
+barcelona_iris|Educació,barcelona_iris,Educació,Education
+barcelona_iris|Dades de la ciutat,barcelona_iris,Dades de la ciutat,Administrative / Information / Digital Services
+barcelona_iris|Habitatge,barcelona_iris,Habitatge,Housing / Buildings / Urban Planning
+barcelona_iris|Civisme,barcelona_iris,Civisme,Public Safety / Police
+barcelona_iris|Feminismes / Dones i LGTBI,barcelona_iris,Feminismes / Dones i LGTBI,Equality / Inclusion
+barcelona_iris|Participació,barcelona_iris,Participació,Civic Participation / Governance
+barcelona_iris|Govern Obert,barcelona_iris,Govern Obert,Civic Participation / Governance
+nyc_311|Noise - Residential,nyc_311,Noise - Residential,Noise
+nyc_311|Noise - Street/Sidewalk,nyc_311,Noise - Street/Sidewalk,Noise
+nyc_311|Noise - Commercial,nyc_311,Noise - Commercial,Noise
+nyc_311|Noise - Vehicle,nyc_311,Noise - Vehicle,Noise
+nyc_311|Noise - Helicopter,nyc_311,Noise - Helicopter,Noise
+nyc_311|Noise - Park,nyc_311,Noise - Park,Noise
+nyc_311|Noise,nyc_311,Noise,Noise
+nyc_311|Illegal Parking,nyc_311,Illegal Parking,Mobility / Parking / Traffic
+nyc_311|Blocked Driveway,nyc_311,Blocked Driveway,Mobility / Parking / Traffic
+nyc_311|Abandoned Vehicle,nyc_311,Abandoned Vehicle,Mobility / Parking / Traffic
+nyc_311|Traffic Signal Condition,nyc_311,Traffic Signal Condition,Mobility / Parking / Traffic
+nyc_311|Taxi Complaint,nyc_311,Taxi Complaint,Mobility / Parking / Traffic
+nyc_311|For Hire Vehicle Complaint,nyc_311,For Hire Vehicle Complaint,Mobility / Parking / Traffic
+nyc_311|Street Condition,nyc_311,Street Condition,Public Space Maintenance
+nyc_311|Sidewalk Condition,nyc_311,Sidewalk Condition,Public Space Maintenance
+nyc_311|Curb Condition,nyc_311,Curb Condition,Public Space Maintenance
+nyc_311|Obstruction,nyc_311,Obstruction,Public Space Maintenance
+nyc_311|Maintenance or Facility,nyc_311,Maintenance or Facility,Parks / Trees / Environment
+nyc_311|Damaged Tree,nyc_311,Damaged Tree,Parks / Trees / Environment
+nyc_311|Overgrown Tree/Branches,nyc_311,Overgrown Tree/Branches,Parks / Trees / Environment
+nyc_311|Dead/Dying Tree,nyc_311,Dead/Dying Tree,Parks / Trees / Environment
+nyc_311|Illegal Tree Damage,nyc_311,Illegal Tree Damage,Parks / Trees / Environment
+nyc_311|Violation of Park Rules,nyc_311,Violation of Park Rules,Parks / Trees / Environment
+nyc_311|UNSANITARY CONDITION,nyc_311,UNSANITARY CONDITION,Housing / Buildings / Urban Planning
+nyc_311|HEAT/HOT WATER,nyc_311,HEAT/HOT WATER,Housing / Buildings / Urban Planning
+nyc_311|PLUMBING,nyc_311,PLUMBING,Housing / Buildings / Urban Planning
+nyc_311|PAINT/PLASTER,nyc_311,PAINT/PLASTER,Housing / Buildings / Urban Planning
+nyc_311|WATER LEAK,nyc_311,WATER LEAK,Housing / Buildings / Urban Planning
+nyc_311|DOOR/WINDOW,nyc_311,DOOR/WINDOW,Housing / Buildings / Urban Planning
+nyc_311|ELECTRIC,nyc_311,ELECTRIC,Housing / Buildings / Urban Planning
+nyc_311|GENERAL,nyc_311,GENERAL,Housing / Buildings / Urban Planning
+nyc_311|FLOORING/STAIRS,nyc_311,FLOORING/STAIRS,Housing / Buildings / Urban Planning
+nyc_311|Elevator,nyc_311,Elevator,Housing / Buildings / Urban Planning
+nyc_311|General Construction/Plumbing,nyc_311,General Construction/Plumbing,Housing / Buildings / Urban Planning
+nyc_311|Dirty Condition,nyc_311,Dirty Condition,Sanitation / Cleaning / Waste
+nyc_311|Illegal Dumping,nyc_311,Illegal Dumping,Sanitation / Cleaning / Waste
+nyc_311|Residential Disposal Complaint,nyc_311,Residential Disposal Complaint,Sanitation / Cleaning / Waste
+nyc_311|Dead Animal,nyc_311,Dead Animal,Sanitation / Cleaning / Waste
+nyc_311|Sewer,nyc_311,Sewer,Utilities / Water / Sewer
+nyc_311|Water System,nyc_311,Water System,Utilities / Water / Sewer
+nyc_311|Illegal Fireworks,nyc_311,Illegal Fireworks,Public Safety / Police
+nyc_311|Non-Emergency Police Matter,nyc_311,Non-Emergency Police Matter,Public Safety / Police
+nyc_311|Drinking,nyc_311,Drinking,Public Safety / Police
+nyc_311|Panhandling,nyc_311,Panhandling,Public Safety / Police
+nyc_311|Animal-Abuse,nyc_311,Animal-Abuse,Public Safety / Police
+nyc_311|Vendor Enforcement,nyc_311,Vendor Enforcement,Public Safety / Police
+nyc_311|Homeless Person Assistance,nyc_311,Homeless Person Assistance,Social Services / Homelessness
+nyc_311|Encampment,nyc_311,Encampment,Social Services / Homelessness
+nyc_311|Rodent,nyc_311,Rodent,Public Health / Pests
+nyc_311|Food Establishment,nyc_311,Food Establishment,Public Health / Pests
+nyc_311|Smoking or Vaping,nyc_311,Smoking or Vaping,Public Health / Pests
+nyc_311|Consumer Complaint,nyc_311,Consumer Complaint,Economic Development / Commerce
+nyc_311|Street Light Condition,nyc_311,Street Light Condition,Public Space Maintenance
+nyc_311|Litter Basket Request,nyc_311,Litter Basket Request,Sanitation / Cleaning / Waste
+nyc_311|Indoor Air Quality,nyc_311,Indoor Air Quality,Public Health / Pests
+nyc_311|Drug Activity,nyc_311,Drug Activity,Public Safety / Police
+nyc_311|Outdoor Dining,nyc_311,Outdoor Dining,Economic Development / Commerce
+nyc_311|Highway Condition,nyc_311,Highway Condition,Public Space Maintenance
+nyc_311|Root/Sewer/Sidewalk Condition,nyc_311,Root/Sewer/Sidewalk Condition,Public Space Maintenance
+nyc_311|Building/Use,nyc_311,Building/Use,Housing / Buildings / Urban Planning
+nyc_311|Traffic,nyc_311,Traffic,Mobility / Parking / Traffic
+nyc_311|APPLIANCE,nyc_311,APPLIANCE,Housing / Buildings / Urban Planning
+nyc_311|Animal in a Park,nyc_311,Animal in a Park,Parks / Trees / Environment
+nyc_311|Electrical,nyc_311,Electrical,Housing / Buildings / Urban Planning
+nyc_311|Food Poisoning,nyc_311,Food Poisoning,Public Health / Pests
+nyc_311|Abandoned Bike,nyc_311,Abandoned Bike,Mobility / Parking / Traffic
+nyc_311|Standing Water,nyc_311,Standing Water,Public Health / Pests
+nyc_311|SAFETY,nyc_311,SAFETY,Housing / Buildings / Urban Planning
+nyc_311|Plumbing,nyc_311,Plumbing,Housing / Buildings / Urban Planning
+nyc_311|Lead,nyc_311,Lead,Public Health / Pests
+nyc_311|Emergency Response Team (ERT),nyc_311,Emergency Response Team (ERT),Public Safety / Police
+nyc_311|Water Conservation,nyc_311,Water Conservation,Utilities / Water / Sewer
+nyc_311|Lost Property,nyc_311,Lost Property,Public Safety / Police
+nyc_311|Unsanitary Animal Pvt Property,nyc_311,Unsanitary Animal Pvt Property,Public Health / Pests
+nyc_311|Street Sign - Dangling,nyc_311,Street Sign - Dangling,Mobility / Parking / Traffic
+nyc_311|Derelict Vehicles,nyc_311,Derelict Vehicles,Mobility / Parking / Traffic
+nyc_311|Street Sign - Missing,nyc_311,Street Sign - Missing,Mobility / Parking / Traffic
+nyc_311|Dumpster Complaint,nyc_311,Dumpster Complaint,Sanitation / Cleaning / Waste
+nyc_311|Urinating in Public,nyc_311,Urinating in Public,Public Safety / Police
+nyc_311|Air Quality,nyc_311,Air Quality,Public Health / Pests
+nyc_311|Mobile Food Vendor,nyc_311,Mobile Food Vendor,Economic Development / Commerce
+nyc_311|Litter Basket Complaint,nyc_311,Litter Basket Complaint,Sanitation / Cleaning / Waste
+nyc_311|Graffiti,nyc_311,Graffiti,Public Space Maintenance
+nyc_311|Illegal Posting,nyc_311,Illegal Posting,Public Space Maintenance
+nyc_311|Noise - House of Worship,nyc_311,Noise - House of Worship,Noise
+nyc_311|Special Projects Inspection Team (SPIT),nyc_311,Special Projects Inspection Team (SPIT),Housing / Buildings / Urban Planning
+nyc_311|Street Sign - Damaged,nyc_311,Street Sign - Damaged,Mobility / Parking / Traffic
+nyc_311|Unleashed Dog,nyc_311,Unleashed Dog,Public Safety / Police
+nyc_311|LinkNYC,nyc_311,LinkNYC,Administrative / Information / Digital Services
+nyc_311|Real Time Enforcement,nyc_311,Real Time Enforcement,Mobility / Parking / Traffic
+nyc_311|Hazardous Materials,nyc_311,Hazardous Materials,Public Health / Pests
+nyc_311|Bike Rack,nyc_311,Bike Rack,Mobility / Parking / Traffic
+nyc_311|Green Taxi Complaint,nyc_311,Green Taxi Complaint,Mobility / Parking / Traffic
+nyc_311|Construction Lead Dust,nyc_311,Construction Lead Dust,Public Health / Pests
+nyc_311|Cannabis Retailer,nyc_311,Cannabis Retailer,Economic Development / Commerce
+nyc_311|Taxi Report,nyc_311,Taxi Report,Mobility / Parking / Traffic
+nyc_311|Bike/Roller/Skate,nyc_311,Bike/Roller/Skate,Mobility / Parking / Traffic
+nyc_311|Commercial Disposal Complaint,nyc_311,Commercial Disposal Complaint,Sanitation / Cleaning / Waste
+nyc_311|New Tree Request,nyc_311,New Tree Request,Parks / Trees / Environment
+nyc_311|Taxi Compliment,nyc_311,Taxi Compliment,Mobility / Parking / Traffic
+nyc_311|Illegal Animal Kept as Pet,nyc_311,Illegal Animal Kept as Pet,Public Safety / Police
+nyc_311|Bus Stop Shelter Complaint,nyc_311,Bus Stop Shelter Complaint,Mobility / Parking / Traffic
+nyc_311|Harboring Bees/Wasps,nyc_311,Harboring Bees/Wasps,Public Health / Pests
+nyc_311|Sanitation Worker or Vehicle Complaint,nyc_311,Sanitation Worker or Vehicle Complaint,Sanitation / Cleaning / Waste
+nyc_311|Wood Pile Remaining,nyc_311,Wood Pile Remaining,Public Space Maintenance
+nyc_311|Boilers,nyc_311,Boilers,Housing / Buildings / Urban Planning
+nyc_311|Lot Condition,nyc_311,Lot Condition,Public Space Maintenance
+nyc_311|Water Quality,nyc_311,Water Quality,Utilities / Water / Sewer

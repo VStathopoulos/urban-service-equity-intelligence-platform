@@ -1,0 +1,45 @@
+version: 2
+
+seeds:
+  - name: category_mapping
+    description: "Controlled mapping from source-specific service categories to standardized analytical categories."
+    columns:
+      - name: mapping_key
+        tests:
+          - not_null
+          - unique
+
+      - name: source_system
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['nyc_311', 'barcelona_iris']
+
+      - name: service_category_original
+        tests:
+          - not_null
+
+      - name: service_category_standardized
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'Administrative / Information / Digital Services'
+                  - 'Civic Participation / Governance'
+                  - 'Culture / Leisure / Sports'
+                  - 'Economic Development / Commerce'
+                  - 'Education'
+                  - 'Equality / Inclusion'
+                  - 'Housing / Buildings / Urban Planning'
+                  - 'Mobility / Parking / Traffic'
+                  - 'Noise'
+                  - 'Parks / Trees / Environment'
+                  - 'Public Health / Pests'
+                  - 'Public Safety / Police'
+                  - 'Public Space Maintenance'
+                  - 'Sanitation / Cleaning / Waste'
+                  - 'Social Services / Homelessness'
+                  - 'Tax / Finance'
+                  - 'Utilities / Water / Sewer'

@@ -63,6 +63,37 @@ models:
         tests:
           - not_null
 
+      - name: service_category_standardized
+        description: "Controlled standardized service category used for cross-city comparison. Unmapped values are labeled as 'Other / Unmapped'."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'Administrative / Information / Digital Services'
+                  - 'Civic Participation / Governance'
+                  - 'Culture / Leisure / Sports'
+                  - 'Economic Development / Commerce'
+                  - 'Education'
+                  - 'Equality / Inclusion'
+                  - 'Housing / Buildings / Urban Planning'
+                  - 'Mobility / Parking / Traffic'
+                  - 'Noise'
+                  - 'Other / Unmapped'
+                  - 'Parks / Trees / Environment'
+                  - 'Public Health / Pests'
+                  - 'Public Safety / Police'
+                  - 'Public Space Maintenance'
+                  - 'Sanitation / Cleaning / Waste'
+                  - 'Social Services / Homelessness'
+                  - 'Tax / Finance'
+                  - 'Utilities / Water / Sewer'
+
+      - name: is_category_mapped
+        description: "Boolean flag indicating whether the original source category was found in the controlled mapping seed."
+        tests:
+          - not_null
+
       - name: has_area
         description: "Boolean flag indicating whether the source record had a reported area/neighbourhood/borough before canonical fallback."
         tests:

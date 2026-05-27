@@ -104,53 +104,66 @@ unioned as (
     union all
     select * from barcelona
 
+),
+
+category_mapping as (
+
+    select
+        source_system,
+        service_category_original,
+        service_category_standardized
+    from {{ ref('category_mapping') }}
+
 )
 
 select
-    service_request_key,
-    source_system,
-    source_city,
-    source_country,
+    unioned.service_request_key,
+    unioned.source_system,
+    unioned.source_city,
+    unioned.source_country,
 
-    request_id,
-    created_at,
-    closed_at,
-    created_date,
-    created_month,
+    unioned.request_id,
+    unioned.created_at,
+    unioned.closed_at,
+    unioned.created_date,
+    unioned.created_month,
 
-    status,
-    is_closed,
-    is_open,
+    unioned.status,
+    unioned.is_closed,
+    unioned.is_open,
 
-    service_category_original,
-    service_subcategory_original,
-    request_type_original,
-    service_detail_original,
+    unioned.service_category_original,
+    unioned.service_subcategory_original,
+    unioned.request_type_original,
+    unioned.service_detail_original,
 
-    null::text as service_category_standardized,
-    false as is_category_mapped,
+    coalesce(category_mapping.service_category_standardized, 'Other / Unmapped') as service_category_standardized,
+    category_mapping.service_category_standardized is not null as is_category_mapped,
 
-    agency_or_department,
+    unioned.agency_or_department,
 
     case
-        when area_name is not null and btrim(area_name) <> '' then true
+        when unioned.area_name is not null and btrim(unioned.area_name) <> '' then true
         else false
     end as has_area,
 
-    coalesce(nullif(btrim(area_name), ''), 'Unknown / Not reported') as area_name,
+    coalesce(nullif(btrim(unioned.area_name), ''), 'Unknown / Not reported') as area_name,
 
-    city_name,
-    postal_code,
+    unioned.city_name,
+    unioned.postal_code,
 
-    latitude,
-    longitude,
-    has_geo,
+    unioned.latitude,
+    unioned.longitude,
+    unioned.has_geo,
 
-    resolution_hours,
-    resolution_days,
-    is_sla_breach_72h,
+    unioned.resolution_hours,
+    unioned.resolution_days,
+    unioned.is_sla_breach_72h,
 
-    intake_channel,
-    ingested_at_utc
+    unioned.intake_channel,
+    unioned.ingested_at_utc
 
 from unioned
+left join category_mapping
+    on unioned.source_system = category_mapping.source_system
+   and unioned.service_category_original = category_mapping.service_category_original
