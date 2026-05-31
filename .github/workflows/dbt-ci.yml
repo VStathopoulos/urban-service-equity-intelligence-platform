@@ -1,0 +1,59 @@
+name: dbt checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dbt/**"
+      - ".github/workflows/dbt-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "dbt/**"
+      - ".github/workflows/dbt-ci.yml"
+
+jobs:
+  dbt-checks:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: urban_service_user
+          POSTGRES_PASSWORD: urban_service_password
+          POSTGRES_DB: urban_service_equity
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U urban_service_user -d urban_service_equity"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: dbt
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: |
+          python -m pip install --upgrade pip
+          pip install dbt-core dbt-postgres
+
+      - name: Show dbt version
+        run: dbt --version
+
+      - name: Validate dbt connection
+        run: dbt debug --profiles-dir .
+
+      - name: Parse dbt project
+        run: dbt parse --profiles-dir .
