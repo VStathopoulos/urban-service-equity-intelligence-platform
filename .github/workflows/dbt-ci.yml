@@ -49,6 +49,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install dbt-core dbt-postgres
 
+      - name: Create CI dbt profile
+        run: |
+          PROFILE_NAME=$(awk -F: '/^profile:/ {gsub(/[ "]/,"",$2); print $2}' dbt_project.yml)
+
+          cat > profiles.yml <<EOF
+          ${PROFILE_NAME}:
+            target: ci
+            outputs:
+              ci:
+                type: postgres
+                host: localhost
+                user: urban_service_user
+                password: urban_service_password
+                port: 5432
+                dbname: urban_service_equity
+                schema: public
+                threads: 4
+          EOF
+
+          cat profiles.yml
+
       - name: Show dbt version
         run: dbt --version
 
