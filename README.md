@@ -65,6 +65,15 @@ The dashboard is designed to support questions such as:
 ### Geospatial Service Request Distribution
 
 ![Geospatial service request map](reports/screenshots/geospatial_distribution_map.png)
+---
+
+## Example Insights
+
+- NYC shows the highest service request volume among the included cities.
+- Open backlog varies by city and service category.
+- Certain request categories dominate operational workload.
+- Geographic concentration suggests that service demand is not evenly distributed.
+- Resolution-time buckets help separate quick operational closures from slower service processes.
 
 ---
 
