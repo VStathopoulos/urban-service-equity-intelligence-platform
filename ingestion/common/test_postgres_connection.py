@@ -8,7 +8,7 @@ host = os.getenv("POSTGRES_HOST", "localhost")
 port = os.getenv("POSTGRES_PORT", "5433")
 db = os.getenv("POSTGRES_DB", "urban_service_equity")
 user = os.getenv("POSTGRES_USER", "urban_admin")
-password = os.getenv("POSTGRES_PASSWORD", "urban_admin_password")
+password = os.getenv("POSTGRES_PASSWORD")
 
 connection_url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
 

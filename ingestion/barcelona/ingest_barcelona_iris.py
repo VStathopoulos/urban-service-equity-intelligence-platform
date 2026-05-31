@@ -24,7 +24,7 @@ def build_engine():
     port = get_env_value("POSTGRES_PORT", "5433")
     db = get_env_value("POSTGRES_DB", "urban_service_equity")
     user = get_env_value("POSTGRES_USER", "urban_admin")
-    password = get_env_value("POSTGRES_PASSWORD", "urban_admin_password")
+    password = get_env_value("POSTGRES_PASSWORD")
 
     url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
     return create_engine(url)
