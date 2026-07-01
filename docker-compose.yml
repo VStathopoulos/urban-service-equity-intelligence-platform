@@ -56,6 +56,15 @@ services:
         superset init
         superset run -h 0.0.0.0 -p 8088
 
+  map-server:
+    image: nginx:alpine
+    container_name: urban_service_equity_map_server
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    volumes:
+      - ./reports/maps:/usr/share/nginx/html:ro
+
 volumes:
   superset_home:
   postgres_data:

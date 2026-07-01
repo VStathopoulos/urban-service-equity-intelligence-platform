@@ -302,19 +302,25 @@ The export artifact documents the dashboard state and supports reproducibility.
 
 ## Static Map Artifacts
 
-Some generated map/report artifacts are stored in:
+Generated Folium map artifacts are stored in:
 
 ```text
 reports/maps/
 ```
 
-When using local static map artifacts, serve them with:
+The Docker Compose stack includes a lightweight static map server that serves these artifacts locally at:
 
-```bash
-python -m http.server 8090 --directory reports/maps
+```text
+http://localhost:8090
 ```
 
-This is only required for local static map/report files that are referenced by dashboard markdown or embedded views. It is not required for every Superset chart.
+Running the stack is sufficient:
+
+```bash
+sudo docker compose up -d
+```
+
+This starts PostgreSQL, Superset, and the static Folium map server used by the embedded dashboard map panels. No separate manual static-map server command is required.
 
 ---
 
