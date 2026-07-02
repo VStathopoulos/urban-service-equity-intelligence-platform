@@ -312,3 +312,126 @@ models:
       - name: sla_72h_proxy_status
         tests:
           - not_null
+
+  - name: mart_data_coverage_diagnostics
+    description: "City-level data coverage diagnostics for evaluating observation windows, geospatial usability, category coverage, and whether cross-city temporal comparisons have a valid common window."
+    columns:
+      - name: source_city
+        description: "Canonical city name for the source dataset."
+        tests:
+          - not_null
+
+      - name: source_country
+        description: "Country associated with the source city."
+        tests:
+          - not_null
+
+      - name: source_system
+        description: "Source system providing the service request records."
+        tests:
+          - not_null
+
+      - name: first_request_date
+        description: "Earliest request creation date available for the city/source."
+        tests:
+          - not_null
+
+      - name: last_request_date
+        description: "Latest request creation date available for the city/source."
+        tests:
+          - not_null
+
+      - name: available_days
+        description: "Number of calendar days between the first and last available request dates, inclusive."
+        tests:
+          - not_null
+
+      - name: available_years
+        description: "Approximate available observation period in years."
+        tests:
+          - not_null
+
+      - name: record_count
+        description: "Total number of service request records available for the city/source."
+        tests:
+          - not_null
+
+      - name: records_with_geo
+        description: "Number of records flagged as having geospatial information."
+        tests:
+          - not_null
+
+      - name: records_missing_geo
+        description: "Number of records missing usable geospatial information."
+        tests:
+          - not_null
+
+      - name: usable_geospatial_share_pct
+        description: "Percentage of records flagged as having geospatial information."
+        tests:
+          - not_null
+
+      - name: missing_geospatial_share_pct
+        description: "Percentage of records missing usable geospatial information."
+        tests:
+          - not_null
+
+      - name: records_with_valid_lat_lon
+        description: "Number of records with non-null latitude and longitude values inside valid coordinate ranges."
+        tests:
+          - not_null
+
+      - name: valid_lat_lon_share_pct
+        description: "Percentage of records with valid latitude and longitude values."
+        tests:
+          - not_null
+
+      - name: distinct_service_categories
+        description: "Number of standardized service categories represented in the city/source data."
+        tests:
+          - not_null
+
+      - name: open_record_count
+        description: "Number of records classified as open."
+        tests:
+          - not_null
+
+      - name: closed_record_count
+        description: "Number of records classified as closed."
+        tests:
+          - not_null
+
+      - name: common_window_start
+        description: "Start date of the common observation window across all included cities, calculated as the latest city-level first request date."
+        tests:
+          - not_null
+
+      - name: common_window_end
+        description: "End date of the common observation window across all included cities, calculated as the earliest city-level last request date."
+        tests:
+          - not_null
+
+      - name: has_valid_common_window
+        description: "Boolean flag indicating whether the common observation window is valid. False means the common window start is after the common window end."
+        tests:
+          - not_null
+
+      - name: common_window_days
+        description: "Number of days in the common observation window. Zero when no valid common window exists."
+        tests:
+          - not_null
+
+      - name: inside_common_window_record_count
+        description: "Number of records from the city/source falling inside the valid common observation window."
+        tests:
+          - not_null
+
+      - name: inside_common_window_share_pct
+        description: "Percentage of city/source records falling inside the valid common observation window."
+        tests:
+          - not_null
+
+      - name: coverage_diagnostic_note
+        description: "Human-readable diagnostic note explaining whether the data supports cross-city temporal comparison and geospatial analysis."
+        tests:
+          - not_null
