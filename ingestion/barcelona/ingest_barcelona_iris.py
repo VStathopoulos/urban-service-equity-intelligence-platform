@@ -1,8 +1,10 @@
+import io
 import os
 import re
 from datetime import datetime, timezone
 
 import pandas as pd
+import requests
 from dotenv import load_dotenv
 from pyproj import Transformer
 from sqlalchemy import create_engine, text
@@ -17,6 +19,26 @@ def get_env_value(name: str, default: str | None = None) -> str:
     if value is None or value == "":
         raise ValueError(f"Missing required environment variable: {name}")
     return value
+
+
+def get_optional_env(name: str, default: str | None = None) -> str | None:
+    value = os.getenv(name, default)
+    if value is None:
+        return None
+
+    value = value.strip()
+    if value == "":
+        return None
+
+    return value
+
+
+def get_optional_int(name: str, default: str | None = None) -> int | None:
+    value = get_optional_env(name, default)
+    if value is None:
+        return None
+
+    return int(value)
 
 
 def build_engine():
@@ -100,21 +122,40 @@ def add_wgs84_coordinates(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def fetch_barcelona_iris_sample() -> pd.DataFrame:
+def fetch_barcelona_iris() -> pd.DataFrame:
     source_url = get_env_value("BARCELONA_IRIS_SOURCE_URL")
-    limit = int(get_env_value("BARCELONA_IRIS_SAMPLE_LIMIT", "5000"))
+    limit = get_optional_int("BARCELONA_IRIS_SAMPLE_LIMIT", "5000")
 
-    print(f"Reading Barcelona IRIS CSV sample from: {source_url}")
-    print(f"Sample limit: {limit:,} rows")
+    print(f"Reading Barcelona IRIS CSV from: {source_url}")
+    print(f"Row limit: {limit if limit is not None else 'FULL FILE'}")
+
+    csv_separator = get_env_value("BARCELONA_IRIS_CSV_SEPARATOR", ",")
+
+    response = requests.get(source_url, timeout=300)
+    response.raise_for_status()
+
+    csv_text = response.content.decode("utf-8-sig")
+
+    # The Barcelona IRIS export may contain doubled quote characters around
+    # string values, e.g. ""INCIDENCIA"". Normalize these before parsing.
+    csv_text = csv_text.replace('""', '"')
 
     df = pd.read_csv(
-        source_url,
-        sep=None,
+        io.StringIO(csv_text),
+        sep=csv_separator,
         engine="python",
         nrows=limit,
-        encoding="utf-8",
+        dtype=str,
+        quotechar='"',
+        doublequote=True,
         on_bad_lines="warn",
     )
+
+    if len(df.columns) < 5:
+        raise RuntimeError(
+            "Barcelona IRIS CSV parsed into too few columns. "
+            "Check BARCELONA_IRIS_CSV_SEPARATOR and quote normalization."
+        )
 
     if df.empty:
         raise RuntimeError("Barcelona IRIS CSV returned no records.")
@@ -143,14 +184,18 @@ def fetch_barcelona_iris_sample() -> pd.DataFrame:
     return df
 
 
-def load_to_postgres(df: pd.DataFrame) -> None:
-    engine = build_engine()
-
+def prepare_raw_table(engine) -> None:
     with engine.begin() as conn:
         conn.execute(text("create schema if not exists raw_barcelona;"))
         conn.execute(text("drop view if exists intermediate.int_service_requests_canonical cascade;"))
         conn.execute(text("drop view if exists staging.stg_barcelona_iris_requests cascade;"))
         conn.execute(text("drop table if exists raw_barcelona.barcelona_iris_requests cascade;"))
+
+
+def load_to_postgres(df: pd.DataFrame) -> None:
+    engine = build_engine()
+
+    prepare_raw_table(engine)
 
     df.to_sql(
         name="barcelona_iris_requests",
@@ -166,14 +211,14 @@ def load_to_postgres(df: pd.DataFrame) -> None:
 def main() -> None:
     load_dotenv()
 
-    print("Fetching Barcelona IRIS sample...")
-    df = fetch_barcelona_iris_sample()
+    print("Fetching Barcelona IRIS data...")
+    df = fetch_barcelona_iris()
 
     print(f"Fetched {len(df):,} rows and {len(df.columns):,} columns.")
     print("Loading to raw_barcelona.barcelona_iris_requests...")
     load_to_postgres(df)
 
-    print("Barcelona IRIS sample ingestion complete.")
+    print("Barcelona IRIS ingestion complete.")
 
 
 if __name__ == "__main__":

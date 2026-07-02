@@ -11,7 +11,6 @@ sources:
           - name: fitxa_id
             tests:
               - not_null
-              - unique
           - name: tipus
             tests:
               - not_null

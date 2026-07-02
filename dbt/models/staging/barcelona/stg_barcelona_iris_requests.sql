@@ -55,13 +55,12 @@ typed as (
              and created_day ~ '^[0-9]{1,2}$'
              and created_month::int between 1 and 12
              and created_day::int between 1 and 31
-                then make_timestamptz(
-                    created_year::int,
-                    created_month::int,
-                    created_day::int,
-                    0, 0, 0,
-                    'Europe/Madrid'
-                )
+                then make_timestamp(
+                         created_year::int,
+                         created_month::int,
+                         created_day::int,
+                         0, 0, 0
+                     )
             else null
         end as created_at,
 
@@ -71,13 +70,12 @@ typed as (
              and closed_day ~ '^[0-9]{1,2}$'
              and closed_month::int between 1 and 12
              and closed_day::int between 1 and 31
-                then make_timestamptz(
-                    closed_year::int,
-                    closed_month::int,
-                    closed_day::int,
-                    0, 0, 0,
-                    'Europe/Madrid'
-                )
+                then make_timestamp(
+                         closed_year::int,
+                         closed_month::int,
+                         closed_day::int,
+                         0, 0, 0
+                     )
             else null
         end as closed_at,
 

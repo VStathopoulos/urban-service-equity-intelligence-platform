@@ -134,3 +134,17 @@ nyc_311|Wood Pile Remaining,nyc_311,Wood Pile Remaining,Public Space Maintenance
 nyc_311|Boilers,nyc_311,Boilers,Housing / Buildings / Urban Planning
 nyc_311|Lot Condition,nyc_311,Lot Condition,Public Space Maintenance
 nyc_311|Water Quality,nyc_311,Water Quality,Utilities / Water / Sewer
+nyc_311__Bike/Roller/Skate Chronic,nyc_311,Bike/Roller/Skate Chronic,Mobility / Parking / Traffic
+nyc_311__Broken Parking Meter,nyc_311,Broken Parking Meter,Mobility / Parking / Traffic
+nyc_311__Bike Rack Condition,nyc_311,Bike Rack Condition,Mobility / Parking / Traffic
+nyc_311__E-Scooter,nyc_311,E-Scooter,Mobility / Parking / Traffic
+nyc_311__For Hire Vehicle Report,nyc_311,For Hire Vehicle Report,Mobility / Parking / Traffic
+nyc_311__Green Taxi Report,nyc_311,Green Taxi Report,Mobility / Parking / Traffic
+nyc_311__Bus Stop Shelter Placement,nyc_311,Bus Stop Shelter Placement,Mobility / Parking / Traffic
+nyc_311__Missed Collection,nyc_311,Missed Collection,Sanitation / Cleaning / Waste
+nyc_311__Street Sweeping Complaint,nyc_311,Street Sweeping Complaint,Sanitation / Cleaning / Waste
+nyc_311__Snow or Ice,nyc_311,Snow or Ice,Sanitation / Cleaning / Waste
+nyc_311__Industrial Waste,nyc_311,Industrial Waste,Sanitation / Cleaning / Waste
+nyc_311__Adopt-A-Basket,nyc_311,Adopt-A-Basket,Sanitation / Cleaning / Waste
+nyc_311__Institution Disposal Complaint,nyc_311,Institution Disposal Complaint,Sanitation / Cleaning / Waste
+barcelona_iris__Comerç,barcelona_iris,Comerç,Economic Development / Commerce
