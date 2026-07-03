@@ -331,6 +331,26 @@ sudo docker compose up -d
 
 This starts PostgreSQL, Superset, and the static Folium map server used by the embedded dashboard map panels. No separate manual static-map server command is required.
 
+### Folium map methodology and interpretation
+
+The static Folium maps are generated from the standardized map-point mart and are intended as an exploratory geospatial layer, not as the primary source for total request-volume comparisons.
+
+Current export controls are documented in `.env.example` and read by `scripts/export_folium_service_maps.py`:
+
+- `MAP_START_DATE=2024-01-01`
+- `MAP_END_DATE=2025-01-01`
+- `MAX_POINTS_PER_CITY=8000`
+
+This keeps the map export aligned to the harmonized 2024 cross-city comparison window and limits rendered points per city for browser performance.
+
+Important interpretation notes:
+
+- Only records with valid latitude/longitude are displayed on the Folium maps.
+- The displayed map points may be a reproducible sample when a city has more valid coordinate records than the configured point cap.
+- Point density therefore reflects both service-request activity and coordinate availability.
+- Standardized service categories use stable colors across city maps, so the same category keeps the same legend color in each city.
+- Dashboard KPI charts and dbt marts remain the better source for total-volume, status, backlog, and resolution-time comparisons.
+
 ---
 
 ## Skills Demonstrated
