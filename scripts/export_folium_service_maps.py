@@ -259,6 +259,55 @@ def add_category_legend(folium_map, category_color_map, title="Service category"
 
 
 
+
+def add_map_header_control(
+    folium_map,
+    *,
+    city,
+    start_date,
+    end_date,
+    displayed_rows,
+):
+    try:
+        display_end_date = str((pd.to_datetime(end_date) - pd.Timedelta(days=1)).date())
+    except Exception:
+        display_end_date = end_date
+
+    header_html = f"""
+    <div style="
+        position: fixed;
+        top: 12px;
+        left: 60px;
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.96);
+        padding: 12px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        font-size: 12px;
+        line-height: 1.35;
+        max-width: 390px;
+    ">
+        <div style="
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #111827;
+        ">
+            {html_lib.escape(str(city))} Service Request Distribution
+        </div>
+        <div style="color:#374151;">
+            Harmonized 2024 geocoded service-request sample
+        </div>
+        <div style="color:#4b5563; margin-top:4px;">
+            Window: {html_lib.escape(str(start_date))} to {html_lib.escape(str(display_end_date))}
+            · Displayed points: {displayed_rows:,}
+        </div>
+    </div>
+    """
+
+    folium_map.get_root().html.add_child(folium.Element(header_html))
+
 def add_category_filter_control(
     folium_map,
     category_layers,
@@ -299,8 +348,8 @@ def add_category_filter_control(
     filter_html = f"""
     <div style="
         position: fixed;
-        top: 86px;
-        left: 18px;
+        top: 138px;
+        left: 60px;
         z-index: 9999;
         background: rgba(255, 255, 255, 0.96);
         padding: 10px 12px;
@@ -492,8 +541,8 @@ def add_geospatial_coverage_caveat(
     caveat_html = f"""
     <div style="
         position: fixed;
-        top: 18px;
-        right: 18px;
+        bottom: 28px;
+        right: 28px;
         z-index: 9999;
         background: rgba(255, 255, 255, 0.94);
         padding: 10px 12px;
@@ -599,22 +648,112 @@ def fetch_city_points(
     )
 
 
-def build_popup(row: pd.Series) -> str:
-    fields = {
-        "City": row.get("source_city"),
-        "Created date": row.get("created_date"),
-        "Category": row.get("service_category_standardized"),
-        "Area": row.get("area_name"),
-        "Status": row.get("status"),
-        "Resolution bucket": row.get("resolution_time_bucket"),
-    }
+def _display_value(value, fallback: str = "Not available") -> str:
+    if value is None or pd.isna(value):
+        return html_lib.escape(fallback)
 
-    lines = []
-    for label, value in fields.items():
-        clean_value = "" if pd.isna(value) else html.escape(str(value))
-        lines.append(f"<strong>{html.escape(label)}:</strong> {clean_value}")
+    text = str(value).strip()
 
-    return "<br>".join(lines)
+    if text == "" or text.lower() in {"nan", "none", "null"}:
+        return html_lib.escape(fallback)
+
+    return html_lib.escape(text)
+
+
+def _format_date_value(value, fallback: str = "Not available") -> str:
+    if value is None or pd.isna(value):
+        return html_lib.escape(fallback)
+
+    try:
+        return html_lib.escape(str(pd.to_datetime(value).date()))
+    except Exception:
+        return _display_value(value, fallback=fallback)
+
+
+def build_tooltip(row: pd.Series) -> str:
+    category = _display_value(
+        row.get("service_category_standardized"),
+        fallback="Service request",
+    )
+    area = _display_value(row.get("area_name"), fallback="Area unavailable")
+    status = _display_value(row.get("status"), fallback="Status unavailable")
+
+    return f"{category} • {area} • {status}"
+
+
+def build_popup(row: pd.Series, marker_color: str = "#6b7280") -> str:
+    city = _display_value(row.get("source_city"))
+    created_date = _format_date_value(row.get("created_date"))
+    category = _display_value(
+        row.get("service_category_standardized"),
+        fallback="Unmapped category",
+    )
+    area = _display_value(row.get("area_name"), fallback="Area unavailable")
+    status = _display_value(row.get("status"), fallback="Status unavailable")
+    resolution_bucket = _display_value(
+        row.get("resolution_time_bucket"),
+        fallback="Resolution bucket unavailable",
+    )
+
+    safe_marker_color = html_lib.escape(str(marker_color))
+
+    return f"""
+    <div style="
+        font-family: Arial, sans-serif;
+        width: 300px;
+        line-height: 1.35;
+        color: #111827;
+    ">
+        <div style="
+            border-left: 5px solid {safe_marker_color};
+            padding-left: 10px;
+            margin-bottom: 10px;
+        ">
+            <div style="
+                font-size: 14px;
+                font-weight: 700;
+                margin-bottom: 2px;
+            ">
+                {category}
+            </div>
+            <div style="
+                font-size: 11px;
+                color: #4b5563;
+            ">
+                {city} · {created_date}
+            </div>
+        </div>
+
+        <table style="
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        ">
+            <tr>
+                <td style="font-weight: 700; padding: 4px 8px 4px 0; color:#374151;">Area</td>
+                <td style="padding: 4px 0;">{area}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; padding: 4px 8px 4px 0; color:#374151;">Status</td>
+                <td style="padding: 4px 0;">{status}</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 700; padding: 4px 8px 4px 0; color:#374151;">Resolution</td>
+                <td style="padding: 4px 0;">{resolution_bucket}</td>
+            </tr>
+        </table>
+
+        <div style="
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 11px;
+            color: #6b7280;
+        ">
+            Geocoded service-request point from the harmonized 2024 map export.
+        </div>
+    </div>
+    """
 
 
 def export_city_map(
@@ -630,10 +769,6 @@ def export_city_map(
     center_lat = float(df["latitude"].median())
     center_lon = float(df["longitude"].median())
 
-    title = (
-        f"{city} Service Request Distribution — "
-        f"2024 sampled geocoded records"
-    )
 
     fmap = folium.Map(
         location=[center_lat, center_lon],
@@ -642,25 +777,6 @@ def export_city_map(
         control_scale=True,
     )
 
-    title_html = f"""
-    <div style="
-        position: fixed;
-        top: 10px;
-        left: 50px;
-        z-index: 9999;
-        background: white;
-        padding: 10px 14px;
-        border: 1px solid #999;
-        border-radius: 4px;
-        font-size: 15px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
-    ">
-        <strong>{html.escape(title)}</strong><br>
-        Shared comparison window: {html.escape(start_date)} to 2024-12-31<br>
-        Displayed points: {len(df):,} deterministic sample
-    </div>
-    """
-    fmap.get_root().html.add_child(folium.Element(title_html))
 
     category_color_map = build_category_color_map(
         df["service_category_standardized"]
@@ -693,8 +809,11 @@ def export_city_map(
             fill=True,
             fill_color=marker_color,
             fill_opacity=0.60,
-            popup=folium.Popup(build_popup(row), max_width=350),
-            tooltip=str(row.get("service_category_standardized") or "Service request"),
+            popup=folium.Popup(
+                build_popup(row, marker_color=marker_color),
+                max_width=390,
+            ),
+            tooltip=build_tooltip(row),
         ).add_to(target_layer)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -710,6 +829,14 @@ def export_city_map(
     _geo_obj = locals().get("geo_df", _display_df)
     _city_obj = locals().get("city_df", None)
     _sample_applied = bool(locals().get("sample_applied", False))
+
+    add_map_header_control(
+        fmap,
+        city=city,
+        start_date=start_date,
+        end_date=end_date,
+        displayed_rows=len(df),
+    )
 
     add_category_filter_control(
         fmap,
