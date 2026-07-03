@@ -7,6 +7,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 import html as html_lib
+import json
 
 # --- Step 6D.1: Folium category styling helpers ---
 
@@ -257,6 +258,205 @@ def add_category_legend(folium_map, category_color_map, title="Service category"
     folium_map.get_root().html.add_child(folium.Element(legend_html))
 
 
+
+def add_category_filter_control(
+    folium_map,
+    category_layers,
+    title="Show service category",
+):
+    """Add a static Leaflet dropdown to show all categories or one selected category.
+
+    The dropdown uses generated category IDs. Layer objects are resolved at
+    browser runtime with retries, because Folium may render custom scripts
+    before all feature-group variables are available.
+    """
+    categories = sorted(category_layers)
+
+    category_ids = {
+        category: f"category_{idx}"
+        for idx, category in enumerate(categories)
+    }
+
+    layer_names_by_category_id = {
+        category_ids[category]: category_layers[category].get_name()
+        for category in categories
+    }
+
+    map_name = folium_map.get_name()
+    select_id = f"{map_name}_category_filter_select"
+
+    option_rows = ['<option value="__all__">All categories</option>']
+
+    for category in categories:
+        category_id = category_ids[category]
+        safe_category = html_lib.escape(category, quote=True)
+        safe_category_id = html_lib.escape(category_id, quote=True)
+
+        option_rows.append(
+            f'<option value="{safe_category_id}">{safe_category}</option>'
+        )
+
+    filter_html = f"""
+    <div style="
+        position: fixed;
+        top: 86px;
+        left: 18px;
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.96);
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        font-size: 12px;
+        line-height: 1.35;
+        max-width: 300px;
+    ">
+        <label for="{select_id}" style="
+            display:block;
+            font-weight:700;
+            margin-bottom:6px;
+            color:#111827;
+        ">
+            {html_lib.escape(title)}
+        </label>
+        <select id="{select_id}" style="
+            width: 260px;
+            font-size: 12px;
+            padding: 5px 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #111827;
+        ">
+            {''.join(option_rows)}
+        </select>
+        <div style="
+            margin-top:6px;
+            color:#6b7280;
+            font-size:11px;
+        ">
+            Select one category or return to all points.
+        </div>
+    </div>
+    """
+
+    layer_names_json = json.dumps(layer_names_by_category_id, ensure_ascii=False)
+
+    filter_script = f"""
+    (function() {{
+        const mapVariableName = {json.dumps(map_name)};
+        const selectId = {json.dumps(select_id)};
+        const layerNamesByCategoryId = {layer_names_json};
+
+        function resolveGlobalObject(variableName) {{
+            if (window[variableName]) {{
+                return window[variableName];
+            }}
+
+            try {{
+                return Function(
+                    "return (typeof " + variableName + " !== 'undefined') ? " + variableName + " : null;"
+                )();
+            }} catch (error) {{
+                return null;
+            }}
+        }}
+
+        function resolveLayerObjects() {{
+            const layerObjectsByCategoryId = {{}};
+
+            Object.entries(layerNamesByCategoryId).forEach(function(entry) {{
+                const categoryId = entry[0];
+                const layerVariableName = entry[1];
+                const layerObject = resolveGlobalObject(layerVariableName);
+
+                if (layerObject) {{
+                    layerObjectsByCategoryId[categoryId] = layerObject;
+                }}
+            }});
+
+            return layerObjectsByCategoryId;
+        }}
+
+        function removeAllCategoryLayers(map, layerObjectsByCategoryId) {{
+            Object.values(layerObjectsByCategoryId).forEach(function(layer) {{
+                if (map.hasLayer(layer)) {{
+                    map.removeLayer(layer);
+                }}
+            }});
+        }}
+
+        function showAllCategoryLayers(map, layerObjectsByCategoryId) {{
+            Object.values(layerObjectsByCategoryId).forEach(function(layer) {{
+                if (!map.hasLayer(layer)) {{
+                    layer.addTo(map);
+                }}
+            }});
+        }}
+
+        function showSelectedCategory(selectedCategoryId) {{
+            const map = resolveGlobalObject(mapVariableName);
+            const layerObjectsByCategoryId = resolveLayerObjects();
+
+            if (!map || Object.keys(layerObjectsByCategoryId).length === 0) {{
+                console.warn("Category filter could not resolve map/layers yet.");
+                return;
+            }}
+
+            removeAllCategoryLayers(map, layerObjectsByCategoryId);
+
+            if (selectedCategoryId === "__all__") {{
+                showAllCategoryLayers(map, layerObjectsByCategoryId);
+                return;
+            }}
+
+            if (layerObjectsByCategoryId[selectedCategoryId]) {{
+                layerObjectsByCategoryId[selectedCategoryId].addTo(map);
+            }}
+        }}
+
+        function attachCategoryFilter(attemptNumber) {{
+            const select = document.getElementById(selectId);
+            const map = resolveGlobalObject(mapVariableName);
+            const layerObjectsByCategoryId = resolveLayerObjects();
+
+            if (!select || !map || Object.keys(layerObjectsByCategoryId).length === 0) {{
+                if (attemptNumber < 60) {{
+                    window.setTimeout(function() {{
+                        attachCategoryFilter(attemptNumber + 1);
+                    }}, 100);
+                }} else {{
+                    console.warn("Category filter initialization failed after retries.");
+                }}
+                return;
+            }}
+
+            select.addEventListener("change", function(event) {{
+                showSelectedCategory(event.target.value);
+            }});
+
+            window[selectId + "_showSelectedCategory"] = showSelectedCategory;
+            window[selectId + "_layerNamesByCategoryId"] = layerNamesByCategoryId;
+        }}
+
+        if (document.readyState === "loading") {{
+            document.addEventListener("DOMContentLoaded", function() {{
+                window.setTimeout(function() {{
+                    attachCategoryFilter(0);
+                }}, 0);
+            }});
+        }} else {{
+            window.setTimeout(function() {{
+                attachCategoryFilter(0);
+            }}, 0);
+        }}
+    }})();
+    """
+
+    folium_map.get_root().html.add_child(folium.Element(filter_html))
+    folium_map.get_root().script.add_child(folium.Element(filter_script))
+
+
 def add_geospatial_coverage_caveat(
     folium_map,
     *,
@@ -468,9 +668,22 @@ def export_city_map(
         else []
     )
 
+    category_layers = {
+        category: folium.FeatureGroup(name=category, show=True)
+        for category in sorted(category_color_map)
+    }
+
+    for category_layer in category_layers.values():
+        category_layer.add_to(fmap)
+
     for _, row in df.iterrows():
         category = _clean_category(row.get("service_category_standardized"))
         marker_color = category_color_map.get(category, DEFAULT_CATEGORY_COLOR)
+        target_layer = category_layers.get(category)
+        if target_layer is None:
+            target_layer = folium.FeatureGroup(name=category, show=True)
+            target_layer.add_to(fmap)
+            category_layers[category] = target_layer
         folium.CircleMarker(
             location=[row["latitude"], row["longitude"]],
             radius=3,
@@ -482,7 +695,7 @@ def export_city_map(
             fill_opacity=0.60,
             popup=folium.Popup(build_popup(row), max_width=350),
             tooltip=str(row.get("service_category_standardized") or "Service request"),
-        ).add_to(fmap)
+        ).add_to(target_layer)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -497,6 +710,12 @@ def export_city_map(
     _geo_obj = locals().get("geo_df", _display_df)
     _city_obj = locals().get("city_df", None)
     _sample_applied = bool(locals().get("sample_applied", False))
+
+    add_category_filter_control(
+        fmap,
+        category_layers,
+        title="Show service category",
+    )
 
     add_category_legend(
         fmap,
