@@ -6,7 +6,7 @@ sources:
     schema: raw_nyc
     tables:
       - name: nyc_311_requests
-        description: "Raw NYC 311 service requests sample."
+        description: "Raw NYC 311 service request records loaded from the configured Socrata endpoint and date window."
         columns:
           - name: unique_key
             tests:

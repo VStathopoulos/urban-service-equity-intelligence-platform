@@ -35,12 +35,22 @@ The current version is a completed **v1 analytics engineering project** focused 
 The current version focuses on selected US and European municipal service request datasets, including:
 
 - NYC 311 service requests
-- Dublin city customer service request data
 - Barcelona IRIS service request data
+
+The current analytical comparison focuses on NYC and Barcelona. Dublin remains a possible extension source, but it is not part of the current harmonized 2024 comparison dataset.
 
 The project is designed as a portfolio-grade analytics engineering project rather than a one-off notebook analysis.
 
 ---
+
+
+## Comparison Window and Data Coverage
+
+Cross-city comparisons in the current version use a harmonized 2024 observation window covering **2024-01-01 to 2024-12-31** for NYC 311 and Barcelona IRIS service request data.
+
+Barcelona also contains earlier source records in the loaded 2024 IRIS extract, but cross-city comparisons should be interpreted using the shared 2024 window. Longer city-specific coverage is retained for data coverage diagnostics and source-context checks, not for direct cross-city temporal comparison.
+
+The dbt model `mart_data_coverage_diagnostics` exposes first/last request dates, record counts, geospatial coverage, and common-window validity for each city/source.
 
 ## Key Analytical Questions
 
@@ -106,7 +116,7 @@ The project separates ingestion, storage, transformation, and visualization into
 ├── ingestion/                   # Python ingestion scripts
 │   ├── common/                  # Shared ingestion utilities and connection checks
 │   ├── nyc/                     # NYC 311 ingestion logic
-│   ├── dublin/                  # Dublin service request ingestion logic
+│   ├── dublin/                  # Optional/legacy Dublin ingestion logic, not part of the current 2024 comparison
 │   └── barcelona/               # Barcelona IRIS ingestion logic
 ├── reports/
 │   ├── maps/                    # Generated static map/report artifacts
@@ -263,7 +273,6 @@ Examples:
 
 ```bash
 python -m ingestion.nyc.ingest_nyc_311
-python -m ingestion.dublin.ingest_dublin_service_requests
 python -m ingestion.barcelona.ingest_barcelona_iris
 ```
 

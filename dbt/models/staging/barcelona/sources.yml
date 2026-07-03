@@ -6,7 +6,7 @@ sources:
     schema: raw_barcelona
     tables:
       - name: barcelona_iris_requests
-        description: "Raw Barcelona IRIS service requests sample."
+        description: "Raw Barcelona IRIS service request records loaded from the configured source extract."
         columns:
           - name: fitxa_id
             tests:
