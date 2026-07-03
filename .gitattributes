@@ -1,0 +1,2 @@
+# Exclude generated Folium map exports from GitHub language statistics
+reports/maps/*.html linguist-generated=true
