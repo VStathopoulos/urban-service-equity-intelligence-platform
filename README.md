@@ -331,6 +331,36 @@ sudo docker compose up -d
 
 This starts PostgreSQL, Superset, and the static Folium map server used by the embedded dashboard map panels. No separate manual static-map server command is required.
 
+
+### H3 hex map methodology and interpretation
+
+In addition to the point-level Folium maps, the project generates H3 hex hotspot maps from the same standardized geocoded request mart.
+
+Generated hex map outputs:
+
+- `reports/maps/barcelona_service_request_hex_map.html`
+- `reports/maps/nyc_service_request_hex_map.html`
+
+The H3 maps are produced by `scripts/export_folium_hex_maps.py` and validated by `scripts/check_folium_hex_map_outputs.py`.
+
+Current export controls are documented in `.env.example`:
+
+- `HEX_MAP_START_DATE=2024-01-01`
+- `HEX_MAP_END_DATE=2025-01-01`
+- `H3_RESOLUTION=8`
+- `MIN_HEX_REQUESTS=5`
+
+Interpretation notes:
+
+- Hex maps aggregate only records with valid latitude/longitude.
+- H3 resolution 8 is used for the first city-scale hotspot layer.
+- Cells with fewer than the configured minimum request count are hidden to reduce visual noise.
+- Hex color intensity represents request density within the selected 2024 window.
+- The current hex maps show raw geocoded request concentration, not population-normalized demand.
+- Density should therefore be interpreted alongside city size, reporting behavior, coordinate coverage, and dashboard KPI totals.
+- The hex maps are currently generated as standalone static HTML artifacts; they are not yet embedded in the Superset dashboard.
+
+
 ### Folium map methodology and interpretation
 
 The static Folium maps are generated from the standardized map-point mart and are intended as an exploratory geospatial layer, not as the primary source for total request-volume comparisons.
