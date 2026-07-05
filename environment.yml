@@ -14,6 +14,8 @@ dependencies:
   - psycopg2
   - pyyaml
   - pyproj
+  - h3-py
+  - folium
   - jupyterlab
   - ipykernel
 
