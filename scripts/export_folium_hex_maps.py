@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import html
+import json
 import os
 from pathlib import Path
 
@@ -292,6 +293,194 @@ def add_caveat(fmap: folium.Map, min_hex_requests: int):
     fmap.get_root().html.add_child(folium.Element(caveat))
 
 
+
+def add_hex_polygons(layer, hex_df, quantiles):
+    for _, row in hex_df.iterrows():
+        boundary = h3.cell_to_boundary(row["h3_cell"])
+        color = color_for_count(int(row["request_count"]), quantiles)
+
+        folium.Polygon(
+            locations=[list(point) for point in boundary],
+            color="#111827",
+            weight=0.4,
+            opacity=0.45,
+            fill=True,
+            fill_color=color,
+            fill_opacity=0.62,
+            popup=folium.Popup(popup_html(row), max_width=380),
+            tooltip=f'{int(row["request_count"]):,} requests · {row["dominant_category"]}',
+        ).add_to(layer)
+
+
+def add_hex_category_filter_control(fmap, option_layers):
+    options = list(option_layers)
+
+    option_ids = {
+        option: "__all__" if option == "All categories" else f"category_{idx}"
+        for idx, option in enumerate(options)
+    }
+
+    map_name = fmap.get_name()
+    select_id = f"{map_name}_hex_category_filter_select"
+
+    option_rows = []
+
+    for option in options:
+        option_id = option_ids[option]
+        safe_option = html.escape(option, quote=True)
+        safe_option_id = html.escape(option_id, quote=True)
+        option_rows.append(f'<option value="{safe_option_id}">{safe_option}</option>')
+
+    layer_names_by_option_id = {
+        option_ids[option]: option_layers[option].get_name()
+        for option in options
+    }
+
+    filter_html = f"""
+    <div style="
+        position: fixed;
+        top: 138px;
+        left: 60px;
+        z-index: 9999;
+        background: rgba(255,255,255,0.96);
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        font-size: 12px;
+        line-height: 1.35;
+        max-width: 315px;
+    ">
+        <label for="{select_id}" style="
+            display:block;
+            font-weight:700;
+            margin-bottom:6px;
+            color:#111827;
+        ">
+            Show hex density for
+        </label>
+        <select id="{select_id}" style="
+            width: 285px;
+            font-size: 12px;
+            padding: 5px 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #111827;
+        ">
+            {''.join(option_rows)}
+        </select>
+        <div style="
+            margin-top:6px;
+            color:#6b7280;
+            font-size:11px;
+        ">
+            Select one service category or return to all requests.
+        </div>
+    </div>
+    """
+
+    layer_names_json = json.dumps(layer_names_by_option_id, ensure_ascii=False)
+
+    filter_script = f"""
+    (function() {{
+        const mapVariableName = {json.dumps(map_name)};
+        const selectId = {json.dumps(select_id)};
+        const layerNamesByOptionId = {layer_names_json};
+
+        function resolveGlobalObject(variableName) {{
+            if (window[variableName]) {{
+                return window[variableName];
+            }}
+
+            try {{
+                return Function(
+                    "return (typeof " + variableName + " !== 'undefined') ? " + variableName + " : null;"
+                )();
+            }} catch (error) {{
+                return null;
+            }}
+        }}
+
+        function resolveLayerObjects() {{
+            const layerObjectsByOptionId = {{}};
+
+            Object.entries(layerNamesByOptionId).forEach(function(entry) {{
+                const optionId = entry[0];
+                const layerVariableName = entry[1];
+                const layerObject = resolveGlobalObject(layerVariableName);
+
+                if (layerObject) {{
+                    layerObjectsByOptionId[optionId] = layerObject;
+                }}
+            }});
+
+            return layerObjectsByOptionId;
+        }}
+
+        function removeAllLayers(map, layerObjectsByOptionId) {{
+            Object.values(layerObjectsByOptionId).forEach(function(layer) {{
+                if (map.hasLayer(layer)) {{
+                    map.removeLayer(layer);
+                }}
+            }});
+        }}
+
+        function showSelectedLayer(selectedOptionId) {{
+            const map = resolveGlobalObject(mapVariableName);
+            const layerObjectsByOptionId = resolveLayerObjects();
+
+            if (!map || Object.keys(layerObjectsByOptionId).length === 0) {{
+                console.warn("Hex category filter could not resolve map/layers yet.");
+                return;
+            }}
+
+            removeAllLayers(map, layerObjectsByOptionId);
+
+            if (layerObjectsByOptionId[selectedOptionId]) {{
+                layerObjectsByOptionId[selectedOptionId].addTo(map);
+            }}
+        }}
+
+        function attachFilter(attemptNumber) {{
+            const select = document.getElementById(selectId);
+            const map = resolveGlobalObject(mapVariableName);
+            const layerObjectsByOptionId = resolveLayerObjects();
+
+            if (!select || !map || Object.keys(layerObjectsByOptionId).length === 0) {{
+                if (attemptNumber < 60) {{
+                    window.setTimeout(function() {{
+                        attachFilter(attemptNumber + 1);
+                    }}, 100);
+                }} else {{
+                    console.warn("Hex category filter initialization failed after retries.");
+                }}
+                return;
+            }}
+
+            select.addEventListener("change", function(event) {{
+                showSelectedLayer(event.target.value);
+            }});
+        }}
+
+        if (document.readyState === "loading") {{
+            document.addEventListener("DOMContentLoaded", function() {{
+                window.setTimeout(function() {{
+                    attachFilter(0);
+                }}, 0);
+            }});
+        }} else {{
+            window.setTimeout(function() {{
+                attachFilter(0);
+            }}, 0);
+        }}
+    }})();
+    """
+
+    fmap.get_root().html.add_child(folium.Element(filter_html))
+    fmap.get_root().script.add_child(folium.Element(filter_script))
+
+
 def export_city_hex_map(
     city: str,
     city_df: pd.DataFrame,
@@ -320,21 +509,36 @@ def export_city_hex_map(
 
     quantiles = build_quantiles(hex_df)
 
-    for _, row in hex_df.iterrows():
-        boundary = h3.cell_to_boundary(row["h3_cell"])
-        color = color_for_count(int(row["request_count"]), quantiles)
+    total_layer = folium.FeatureGroup(name="All categories", show=True)
+    total_layer.add_to(fmap)
+    add_hex_polygons(total_layer, hex_df, quantiles)
 
-        folium.Polygon(
-            locations=[list(point) for point in boundary],
-            color="#111827",
-            weight=0.4,
-            opacity=0.45,
-            fill=True,
-            fill_color=color,
-            fill_opacity=0.62,
-            popup=folium.Popup(popup_html(row), max_width=380),
-            tooltip=f'{int(row["request_count"]):,} requests · {row["dominant_category"]}',
-        ).add_to(fmap)
+    option_layers = {"All categories": total_layer}
+
+    categories = (
+        city_df["service_category_standardized"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+    )
+    categories = sorted(category for category in categories.unique() if category)
+
+    for category in categories:
+        category_points = city_df[
+            city_df["service_category_standardized"].astype(str).str.strip() == category
+        ].copy()
+
+        category_hex_df = aggregate_hexes(category_points, min_hex_requests)
+
+        if category_hex_df.empty:
+            continue
+
+        category_layer = folium.FeatureGroup(name=category, show=False)
+        category_layer.add_to(fmap)
+        add_hex_polygons(category_layer, category_hex_df, quantiles)
+        option_layers[category] = category_layer
+
+    add_hex_category_filter_control(fmap, option_layers)
 
     add_header(
         fmap,
@@ -356,7 +560,6 @@ def export_city_hex_map(
     print(f"- wrote: {output_path}")
     print(f"  source points: {len(city_df):,}")
     print(f"  displayed hexes: {len(hex_df):,}")
-
 
 def main() -> int:
     start_date = env_value("HEX_MAP_START_DATE", DEFAULT_START_DATE)

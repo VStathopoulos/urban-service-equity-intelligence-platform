@@ -19,6 +19,8 @@ REQUIRED_TEXT = [
     "Displayed hexes:",
     "H3 resolution:",
     "H3 request hotspot",
+    "Show hex density for",
+    "All categories",
     "Dominant category",
     "Open rate",
     "72h breach proxy",
@@ -75,10 +77,10 @@ def check_hex_map(path: Path) -> list[str]:
     if polygon_count == 0:
         errors.append(f"{path.name}: no Leaflet polygon layers found")
 
-    if displayed_hexes is not None and polygon_count != displayed_hexes:
+    if displayed_hexes is not None and polygon_count < displayed_hexes:
         errors.append(
-            f"{path.name}: polygon count {polygon_count:,} does not match "
-            f"displayed hexes {displayed_hexes:,}"
+            f"{path.name}: polygon count {polygon_count:,} is lower than "
+            f"displayed all-category hexes {displayed_hexes:,}"
         )
 
     if source_points is not None and source_points <= 0:
@@ -115,7 +117,8 @@ def main() -> int:
     print("- Generated H3 hex map HTML files exist.")
     print("- Each hex map contains header, legend, caveat, and popup content.")
     print("- Each hex map contains Leaflet polygon layers.")
-    print("- Polygon counts match displayed-hex counts from the header.")
+    print("- Polygon counts are at least the all-category displayed-hex counts.")
+    print("- Each hex map contains the category-density dropdown.")
     print("- Source-point and displayed-hex counts are positive.")
 
     return 0
